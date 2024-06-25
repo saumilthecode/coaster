@@ -97,7 +97,27 @@
           material="color: #ff69b4; opacity: 0.5"
           position="0 0 0"
           roller-coaster="speed: 1"
-        ></a-entity>
+        >
+          <!-- Seats -->
+          <a-entity geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5" material="color: #000" position="-0.75 0.25 -0.3"></a-entity>
+          <a-entity geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5" material="color: #000" position="0.75 0.25 -0.3"></a-entity>
+          <a-entity geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5" material="color: #000" position="-0.75 0.25 0.3"></a-entity>
+          <a-entity geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5" material="color: #000" position="0.75 0.25 0.3"></a-entity>
+          
+          <!-- Safety Bars -->
+          <a-entity geometry="primitive: cylinder; radius: 0.05; height: 1.5" material="color: #555" rotation="0 90 0" position="-0.75 0.25 0"></a-entity>
+          <a-entity geometry="primitive: cylinder; radius: 0.05; height: 1.5" material="color: #555" rotation="0 90 0" position="0.75 0.25 0"></a-entity>
+          <a-entity geometry="primitive: cylinder; radius: 0.05; height: 1" material="color: #555" position="-0.75 0.75 -0.5"></a-entity>
+          <a-entity geometry="primitive: cylinder; radius: 0.05; height: 1" material="color: #555" position="0.75 0.75 -0.5"></a-entity>
+          
+          <!-- Camera and controls -->
+          <a-entity
+            camera="near: 0.1; far: 100"
+            look-controls="enabled: true"
+            wasd-controls="enabled: true"
+            position="0 1 0"
+          ></a-entity>
+        </a-entity>
       </a-entity>
 
       <!-- Candyland Environment -->
@@ -105,14 +125,6 @@
       <a-entity geometry="primitive: box; depth: 1; height: 2; width: 1" material="color: red" position="8 1 -13"></a-entity>
       <a-entity geometry="primitive: cylinder; radius: 0.5; height: 2" material="color: purple" position="-8 1 -14"></a-entity>
       <a-entity geometry="primitive: cone; radius-bottom: 1; height: 2" material="color: yellow" position="10 1 -16"></a-entity>
-
-      <!-- Camera and controls -->
-      <a-entity
-        camera="near: 0.1; far: 100"
-        look-controls="enabled: true"
-        wasd-controls="enabled: true"
-        position="0 2 0"
-      ></a-entity>
     </a-scene>
   </body>
 </html>
