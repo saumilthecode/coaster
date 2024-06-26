@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Roller Coaster</title>
+    <title>Candyland Roller Coaster</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <style>
       body {
@@ -12,51 +12,49 @@
         font-family: Arial, sans-serif;
       }
     </style>
-  </head>
-  <body>
+
+    <!-- Script to move roller coaster -->
     <script>
       AFRAME.registerComponent("roller-coaster", {
         schema: {
           speed: { type: "number", default: 1 },
         },
         init: function () {
-          this.train = document.getElementById("train");
-          this.track = document.getElementById("track");
-          this.speed = this.data.speed;
+          this.train = this.el; // Reference to the train entity
+          this.rotationAngle = 0;
         },
         tick: function (time, delta) {
-          const position = this.train.getAttribute("position");
-          const rotation = this.train.getAttribute("rotation");
-          const velocity = 0.01; // adjust this value to control the speed of the train
-          const trackRadius = 5; // adjust this value to match the radius of your track
+          const trackRadius = 5; // Adjust this value to match the radius of your track
+          const velocity = (this.data.speed * delta) / 1000; // Speed in radians per millisecond
 
-          // Update position
-          position.x = trackRadius * Math.sin(rotation.y);
-          position.z = trackRadius * Math.cos(rotation.y);
-
-          // Update rotation
-          rotation.y += velocity;
-
-          // Keep the rotation within a certain range
-          if (rotation.y > Math.PI * 2) {
-            rotation.y -= Math.PI * 2;
-          } else if (rotation.y < 0) {
-            rotation.y += Math.PI * 2;
+          this.rotationAngle += velocity;
+          if (this.rotationAngle > Math.PI * 2) {
+            this.rotationAngle -= Math.PI * 2;
           }
 
-          this.train.setAttribute("position", position);
-          this.train.setAttribute("rotation", rotation);
+          const x = trackRadius * Math.sin(this.rotationAngle);
+          const z = trackRadius * Math.cos(this.rotationAngle);
+
+          this.train.setAttribute("position", { x: x, y: 0, z: z });
+          this.train.setAttribute("rotation", {
+            x: 0,
+            y: THREE.Math.radToDeg(this.rotationAngle),
+            z: 0,
+          });
         },
       });
     </script>
+  </head>
+  <body>
     <a-scene>
       <!-- Roller coaster track -->
       <a-entity id="roller-coaster" scale="10 10 10">
         <!-- Track -->
         <a-entity
           id="track"
-          geometry="primitive: circle; radius: 0.5"
+          geometry="primitive: circle; radius: 5"
           material="color: #ff69b4; opacity: 0.5"
+          position="0 0 0"
         >
           <!-- Track segments -->
           <a-entity
@@ -95,36 +93,136 @@
           id="train"
           geometry="primitive: box; width: 2; height: 1; depth: 1"
           material="color: #ff69b4; opacity: 0.5"
-          position="0 0 0"
+          position="0 0 5"
           roller-coaster="speed: 1"
         >
           <!-- Seats -->
-          <a-entity geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5" material="color: #000" position="-0.75 0.25 -0.3"></a-entity>
-          <a-entity geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5" material="color: #000" position="0.75 0.25 -0.3"></a-entity>
-          <a-entity geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5" material="color: #000" position="-0.75 0.25 0.3"></a-entity>
-          <a-entity geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5" material="color: #000" position="0.75 0.25 0.3"></a-entity>
-          
+          <a-entity
+            geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5"
+            material="color: #000"
+            position="-0.75 0.25 -0.3"
+          ></a-entity>
+          <a-entity
+            geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5"
+            material="color: #000"
+            position="0.75 0.25 -0.3"
+          ></a-entity>
+          <a-entity
+            geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5"
+            material="color: #000"
+            position="-0.75 0.25 0.3"
+          ></a-entity>
+          <a-entity
+            geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5"
+            material="color: #000"
+            position="0.75 0.25 0.3"
+          ></a-entity>
           <!-- Safety Bars -->
-          <a-entity geometry="primitive: cylinder; radius: 0.05; height: 1.5" material="color: #555" rotation="0 90 0" position="-0.75 0.25 0"></a-entity>
-          <a-entity geometry="primitive: cylinder; radius: 0.05; height: 1.5" material="color: #555" rotation="0 90 0" position="0.75 0.25 0"></a-entity>
-          <a-entity geometry="primitive: cylinder; radius: 0.05; height: 1" material="color: #555" position="-0.75 0.75 -0.5"></a-entity>
-          <a-entity geometry="primitive: cylinder; radius: 0.05; height: 1" material="color: #555" position="0.75 0.75 -0.5"></a-entity>
-          
+          <a-entity
+            geometry="primitive: cylinder; radius: 0.05; height: 1.5"
+            material="color: #555"
+            rotation="0 0 90"
+            position="-0.75 0.25 0"
+          ></a-entity>
+          <a-entity
+            geometry="primitive: cylinder; radius: 0.05; height: 1.5"
+            material="color: #555"
+            rotation="0 0 90"
+            position="0.75 0.25 0"
+          ></a-entity>
+          <a-entity
+            geometry="primitive: cylinder; radius: 0.05; height: 1"
+            material="color: #555"
+            position="-0.75 0.75 -0.5"
+          ></a-entity>
+          <a-entity
+            geometry="primitive: cylinder; radius: 0.05; height: 1"
+            material="color: #555"
+            position="0.75 0.75 -0.5"
+          ></a-entity>
           <!-- Camera and controls -->
           <a-entity
             camera="near: 0.1; far: 100"
             look-controls="enabled: true"
             wasd-controls="enabled: true"
-            position="0 1 0"
+            position="0 0.5 0"
           ></a-entity>
         </a-entity>
       </a-entity>
 
       <!-- Candyland Environment -->
-      <a-entity geometry="primitive: sphere; radius: 1.5" material="color: pink" position="0 1.5 -15"></a-entity>
-      <a-entity geometry="primitive: box; depth: 1; height: 2; width: 1" material="color: red" position="8 1 -13"></a-entity>
-      <a-entity geometry="primitive: cylinder; radius: 0.5; height: 2" material="color: purple" position="-8 1 -14"></a-entity>
-      <a-entity geometry="primitive: cone; radius-bottom: 1; height: 2" material="color: yellow" position="10 1 -16"></a-entity>
+      <!-- Chocolate Trees -->
+      <a-entity id="chocolate-trees">
+        <!-- Tree 1 -->
+        <a-entity
+          geometry="primitive: cylinder; radius: 0.2; height: 3"
+          material="color: #8B4513"
+          position="5 1.5 -10"
+        >
+          <!-- Chocolate bars as branches -->
+          <a-entity
+            geometry="primitive: box; width: 0.1; height: 0.8; depth: 0.2"
+            material="color: #8B4513"
+            position="0 1.8 0.8"
+            rotation="30 0 0"
+          ></a-entity>
+          <a-entity
+            geometry="primitive: box; width: 0.1; height: 0.8; depth: 0.2"
+            material="color: #8B4513"
+            position="0 2.4 0.8"
+            rotation="-30 0 0"
+          ></a-entity>
+        </a-entity>
+        <!-- Tree 2 -->
+        <a-entity
+          geometry="primitive: cylinder; radius: 0.2; height: 3"
+          material="color: #8B4513"
+          position="-5 1.5 -12"
+        >
+          <!-- Chocolate bars as branches -->
+          <a-entity
+            geometry="primitive: box; width: 0.1; height: 0.8; depth: 0.2"
+            material="color: #8B4513"
+            position="0 1.8 0.8"
+            rotation="20 0 0"
+          ></a-entity>
+          <a-entity
+            geometry="primitive: box; width: 0.1; height: 0.8; depth: 0.2"
+            material="color: #8B4513"
+            position="0 2.4 0.8"
+            rotation="-20 0 0"
+          ></a-entity>
+        </a-entity>
+        <!-- Tree 3 -->
+        <a-entity
+          geometry="primitive: cylinder; radius: 0.2; height: 3"
+          material="color: #8B4513"
+          position="7 1.5 -14"
+        >
+          <!-- Chocolate bars as branches -->
+          <a-entity
+            geometry="primitive: box; width: 0.1; height: 0.8; depth: 0.2"
+            material="color: #8B4513"
+            position="0 1.8 0.8"
+            rotation="25 0 0"
+          ></a-entity>
+          <a-entity
+            geometry="primitive: box; width: 0.1; height: 0.8; depth: 0.2"
+            material="color: #8B4513"
+            position="0 2.4 0.8"
+            rotation="-25 0 0"
+          ></a-entity>
+        </a-entity>
+      </a-entity>
+
+      <!-- Chocolate Waterfall with Animation -->
+      <a-entity
+        id="waterfall"
+        geometry="primitive: box; width: 8; height: 1; depth: 0.5"
+        material="color: #8B4513"
+        position="0 0.5 -15"
+        animation__scale="property: scale; dir: alternate; dur: 2000; easing: easeInOutSine; loop: true; to: 1 2 1"
+      ></a-entity>
     </a-scene>
   </body>
 </html>
